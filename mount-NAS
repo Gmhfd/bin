@@ -1,0 +1,13 @@
+#!/usr/bin/bash
+
+if [[ ! -z "$1" ]]; then
+    echo "Simple utility to mount the NAS
+    USAGE: mount-NAS" # Just this files name
+    exit 0
+fi
+
+# Make sure Avahi is running (Socket activation should take care of this but i don't trust it)
+sudo systemctl start avahi-daemon.service
+
+# Mount NAS
+sudo mount --mkdir -t cifs //nas.local/home /home/Gmhfd/NAS -o credentials=/etc/samba/credentials/sg@NAS,iocharset=utf8,uid=1000,gid=1000,vers=2.0

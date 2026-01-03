@@ -1,0 +1,41 @@
+#!/usr/bin/bash
+
+if [[ ! -z "$1" ]]; then
+    echo "Simple utility to refresh the mirrorlist
+    USAGE: refresh-mirrorlist" # Just this files name
+    exit 0
+fi
+
+MIRRORLISTFILE="/etc/pacman.d/mirrorlist-rate-mirrors"
+
+time_scince_last_run () {
+    # Read first line of mirrorlist for Timestamp
+    local first_line="$(head -q -n 1 $MIRRORLISTFILE)"
+    # Extract just the time (remove "# Started: ")
+    local last_run_time_string=${first_line:14}
+    # Transform string into seconds scince epoch
+    local last_run_time_seconds=$(date -d "$last_run_time_string" +"%s")
+    # Get current time in seconds scince epoch
+    local current_time_seconds=$(date +"%s")
+    # Calculate time difference in seconds
+    time_difference=$((current_time_seconds - last_run_time_seconds))
+}
+
+prompt_to_contine () {
+    read -p "The last refesh was only $(date -d "@$time_difference" +'%dd %Hh %Mm %Ss') ago do you want to refresh again [N|y] " confirm
+
+	case $confirm in
+		"Yes"|"yes"|"Y"|"y") return;;
+		*) exit 1;;
+	esac
+}
+# Sets the time_difference variable
+time_scince_last_run
+
+if (( time_difference <  1767402000)); then # 5 days in seconds
+    prompt_to_contine
+fi
+
+TMPFILE="$(mktemp)"
+rate-mirrors --entry-country=DE  --top-mirrors-number-to-retest=15 --save=$TMPFILE arch --completion=1 --max-delay=21600 --sort-mirrors-by=score_asc
+sudo mv $TMPFILE $MIRRORLISTFILE

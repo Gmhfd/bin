@@ -1,0 +1,74 @@
+#!/usr/bin/bash
+
+help() {
+echo \
+"Usage: update [OPTIONS]
+Simple utility to run a full system upgrade
+Options:
+	-h, --help ............................. Show this help
+	-f, --mirrorfile ....................... Use custom mirrorfile instead of fetching from archlinux.org (Not currently working)
+	-m, --skip-mirrors ..................... Skip updating the mirrorlist
+	-u, --no-upgrade, --no-update .......... Don't update the system
+	-o, --keep-orphans ..................... Keep orphaned packages
+		--yay, --yay-args .................. Additional args to pass to yay"
+    exit 1
+}
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+	-h|--help)
+	help
+	;;
+
+	-f|--mirrorfile)
+	MIRRORFILE="$2"
+	shift # past argument
+	shift # past value
+	;;
+
+	-m|--skip-mirrors)
+	SKIP_MIRRORS=TRUE
+	shift # past argument
+	;;
+
+	-u|--no-upgrade|--no-update)
+	NO_UPDATE=TRUE
+	shift # past argument
+	;;
+
+	-o|--keep-orphans)
+	KEEP_ORPHANS=TRUE
+	shift # past argument
+	;;
+
+	--yay|--yay-args)
+	YAY_ARGS="$2"
+	shift # past argument
+	shift # past value
+	;;
+
+	*)
+	help
+	;;
+
+  esac
+done
+
+# set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters shoud there ever be any
+
+PATH="$(dirname "$(realpath "${BASH_SOURCE[0]}")")":$PATH # Make sure other utilities are available
+
+if [[ $SKIP_MIRRORS != TRUE ]]; then
+	echo "Updating mirrorlist..."
+	refresh-mirrorlist
+fi
+
+if [[ $NO_UPDATE != TRUE ]]; then
+	echo "Running yay..."
+	yay $YAY_ARGS
+fi
+
+if [[ $KEEP_ORPHANS != TRUE ]]; then
+	echo "Removing orphans..."
+	remove-orphans
+fi

@@ -1,0 +1,64 @@
+#!/usr/bin/bash
+
+help() {
+    echo \
+"Usage: remove-orphans [OPTIONS]
+Simple utility to find and remove orphaned packages
+Options:
+	-h, --help .......... Show this help and exit
+		--noconfirm ..... Remove orphans without prompting"
+    exit 0
+}
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+	-h|--help)
+	help
+	;;
+
+	--noconfirm)
+	NOCONFIRM="--noconfirm"
+	shift # past argument
+	;;
+
+	*)
+	help
+	;;
+
+  esac
+done
+
+pkgs="$(pacman -Qtdq)";
+
+if [[ ! -z "$pkgs" ]]; then
+
+echo \
+"The following packages are installed but not required anymore
+You can mark them as explicitly installed with 'sudo pacman -D --asexplicit <pkg>'"
+
+pacman -Qtdq | sudo pacman $NOCONFIRM -Rns -
+
+else
+	echo "No Orphans were found"
+fi
+
+
+# Maybe be able to select specific packages using arrow keys in the future?
+# while true; do
+
+# # Magic snippet from stackoverflow https://stackoverflow.com/questions/10679188/casing-arrow-keys-in-bash
+# escape_char=$(printf "\u1b")
+# read -rsn1 mode # get 1 character
+# if [[ $mode == $escape_char ]]; then
+#     read -rsn2 mode # read 2 more chars
+# fi
+# case $mode in
+#     'q') echo QUITTING ;;
+#     '[A') echo UP ;;
+#     '[B') echo DN ;;
+#     '[D') echo LEFT ;;
+#     '[C') echo RIGHT ;;
+#     *) >&2 echo 'ERR bad input' ;;
+# esac
+
+# done

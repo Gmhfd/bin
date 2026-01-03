@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+if [[ ! -z "$1" ]]; then
+    echo "Simple utility to unmount the NAS
+    USAGE: umount-NAS" # Just this files name
+    exit 0
+fi
+
+sudo umount /home/Gmhfd/NAS

@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+# Just a file where i try out random stuff
+
+path="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+echo $path
