@@ -38,4 +38,9 @@ fi
 
 TMPFILE="$(mktemp)"
 rate-mirrors --entry-country=DE  --top-mirrors-number-to-retest=15 --save=$TMPFILE arch --completion=1 --max-delay=21600 --sort-mirrors-by=score_asc
+
+# Fix permissions
+sudo chown root:root $TMPFILE
+sudo chmod 644 $TMPFILE
+# Now move it
 sudo mv $TMPFILE $MIRRORLISTFILE
