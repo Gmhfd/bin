@@ -14,21 +14,24 @@ just `chmod +x` the files and run them, make sure to read dependecies and and th
 ## Dependecies
 - update
 	- [yay](https://github.com/Jguer/yay) as the AUR helper
-	- other utils from this repo
+	- refresh-mirrorlist and remove-orphans from this repo and their dependecies
 	
 - refresh-mirrorlist
 	+ [rate-mirrors](https://github.com/westandskif/rate-mirrors) to fetch and sort mirrors
+	+ [sudo](https://archlinux.org/packages/core/x86_64/sudo/)
 	
 - mount-NAS, umount-NAS
-	+ avahi for local hostname resolution
-	+ driver for storage medium
+	+ [avahi](https://archlinux.org/packages/extra/x86_64/avahi/) with [local hostname resolution](https://wiki.archlinux.org/title/Avahi#Hostname_resolution), if you wish to use it
+	+ driver for storage medium, most likley [cifs-utils](https://archlinux.org/packages/extra/x86_64/cifs-utils/)
 	
-- remove-oprhans
+- remove-orphans
 	+ [pacman](https://archlinux.org/packages/core/x86_64/pacman/) (pulled by [base](https://archlinux.org/packages/core/any/base/) so you should have this already)
+	+ [sudo](https://archlinux.org/packages/core/x86_64/sudo/)
 	
 - checkpartitionsalignment
 	+ lsblk from [util-linux](https://archlinux.org/packages/core/x86_64/util-linux/) (pulled by [base](https://archlinux.org/packages/core/any/base/) so you should have this already)
 	+ [parted](https://archlinux.org/packages/extra/x86_64/parted/)
+	+ [sudo](https://archlinux.org/packages/core/x86_64/sudo/)
 	
 ## Credits
 - Bruno Bronosky for the [argument parsing snippet](https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash)
