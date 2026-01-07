@@ -1,7 +1,18 @@
 #!/usr/bin/bash
 
-read -p "Please enter WiFi Debug adress and Port: " debug_adress_port
+stream_audio() {
+    scrcpy --require-audio --no-video --no-window --no-control $args
+}
 
-adb connect $debug_adress_port
+read -p "Enter 'addr:port' to use WiFi otherwise USB is used: " answer
 
-scrcpy --require-audio --no-video --no-window --no-control
+# Start of the string |     1-3 numbers with dots in between x4     | 1-5 number port
+IPADRESS_PORT_REGEX="^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]{1,5}$"
+
+if [[ $answer =~ $IPADRESS_PORT_REGEX ]]; then
+    adb connect $answer
+    args="-e"
+else
+    args="-d"
+fi
+stream_audio
