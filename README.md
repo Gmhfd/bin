@@ -11,6 +11,8 @@ just `chmod +x` the files and run them, make sure to read dependecies and and th
 
 - refresh mirrorlist stores the new list to `mirrorlist-rate-mirrors` which you will either have to include in your pacman.conf or edit the `MIRRORLISTFILE` variable
 
+- phone-audio requires you to have [paired your phone](https://wiki.archlinux.org/title/Android_Debug_Bridge#Connect_a_device) beforehand
+
 ## Dependecies
 - update
 	- [yay](https://github.com/Jguer/yay) as the AUR helper
@@ -33,6 +35,9 @@ just `chmod +x` the files and run them, make sure to read dependecies and and th
 	+ [parted](https://archlinux.org/packages/extra/x86_64/parted/)
 	+ [sudo](https://archlinux.org/packages/core/x86_64/sudo/)
 	
+- phone-audio
+	+ [android-tools](https://archlinux.org/packages/extra/x86_64/android-tools/)
+	+ [scrcpy](https://archlinux.org/packages/extra/x86_64/scrcpy/)
 ## Credits
 - Bruno Bronosky for the [argument parsing snippet](https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash)
 - crysman for the entire [checkpartitionsalignment script](https://github.com/crysman/check-partitions-alignment) (its just straight copied from there)

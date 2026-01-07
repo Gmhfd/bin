@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+read -p "Please enter WiFi Debug adress and Port: " debug_adress_port
+
+adb connect $debug_adress_port
+
+scrcpy --require-audio --no-video --no-window --no-control
