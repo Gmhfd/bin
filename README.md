@@ -11,8 +11,6 @@ just `chmod +x` the files and run them, make sure to read dependecies and and th
 
 - refresh mirrorlist stores the new list to `mirrorlist-rate-mirrors` which you will either have to include in your pacman.conf or edit the `MIRRORLISTFILE` variable
 
-- phone-audio requires you to have [paired your phone](https://wiki.archlinux.org/title/Android_Debug_Bridge#Connect_a_device) beforehand
-
 ## Dependecies
 - update
 	- [yay](https://github.com/Jguer/yay) as the AUR helper
@@ -38,6 +36,8 @@ just `chmod +x` the files and run them, make sure to read dependecies and and th
 - phone-audio
 	+ [android-tools](https://archlinux.org/packages/extra/x86_64/android-tools/)
 	+ [scrcpy](https://archlinux.org/packages/extra/x86_64/scrcpy/)
+	+ [avahi](https://archlinux.org/packages/extra/x86_64/avahi/) for MDNS device discovery (optional, no check tho)
 ## Credits
 - Bruno Bronosky for the [argument parsing snippet](https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash)
 - crysman for the entire [checkpartitionsalignment script](https://github.com/crysman/check-partitions-alignment) (its just straight copied from there)
+- gnumoksha for the [mdns device discovery snippet](https://gist.github.com/gnumoksha/f9a5b2e01b1e74ffa2a055b6e18f7c58)
