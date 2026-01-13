@@ -115,10 +115,10 @@ elif (( $(all_connected) > 1 )); then
     choose_device
 elif (( $(usb_connected) == 1 )); then
     echo "INFO: USB device found..."
-    args="-e"
+    args="--select-usb"
 elif (( $(tcp_connected) == 1 )); then
     echo "INFO: TCP/IP device found..."
-    args="-e"
+    args="--select-tcpip"
 else
     echo "INFO: No devices found. Attempting to connect via MDNS"
     connect_mdns
