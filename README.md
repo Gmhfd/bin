@@ -12,9 +12,12 @@ just `chmod +x` the files and run them, make sure to read dependecies and and th
 - refresh mirrorlist stores the new list to `mirrorlist-rate-mirrors` which you will either have to include in your pacman.conf or edit the `MIRRORLISTFILE` variable
 
 ## Dependecies
+- EVERYTHING
+	+ [bash](https://archlinux.org/packages/core/x86_64/bash/) as the interpreter
+
 - update
-	- [yay](https://github.com/Jguer/yay) as the AUR helper
-	- refresh-mirrorlist and remove-orphans from this repo and their dependecies
+	+ [yay](https://github.com/Jguer/yay) as the AUR helper
+	+ refresh-mirrorlist and remove-orphans from this repo and their dependecies
 	
 - refresh-mirrorlist
 	+ [rate-mirrors](https://github.com/westandskif/rate-mirrors) to fetch and sort mirrors

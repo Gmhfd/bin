@@ -2,23 +2,50 @@
 
 # Just a file where i try out random stuff
 
-IPADRESS_PORT_REGEX="^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]{1,5}$"
-IGNORED_LINES="List|of|devices|attached|device$"
+## COLORS
+NC='\033[0m' # No Color
+ERROR='\033[0;31m[ERROR]'
+WARNING='\033[0;33m[WARNING]'
+INFO='\033[2;37m[INFO]'
+INPUT='\033[1;34m'
 
-all_connected() {
-    local num_all=0
-    for line in $(adb devices); do
-        # Not a USB device
-        if [[ $line =~ $IGNORED_LINES ]]; then
-            continue
-        fi
-        (( num_all++ ))
-    done
+device_uris=()
+device_names=()
+i=0
+found_device=0
+echo -e "${NC}These devices were found:"
+for line in $(avahi-browse --terminate --resolve --parsable --no-db-lookup _adb-tls-connect._tcp); do
+    # Device name is on the next line so we extract it here
+    if (( found_device > 0 )); then
+        # Remove Suffix '"'
+        name="${line%\"}"
+        # Remove prefix '"name='
+        name="${name#\"name=}"
+        device_names+=($name)
+        found_device=0
+        echo "$i: $name"
+        (( i++ ))
+    fi
 
-    echo $num_all
-    return $num_all
-}
-all_connected
-if (( $(all_connected) > 1 )); then
-	echo "multiple devices"
-fi
+    if [[ $line != =* ]]; then
+        continue
+    fi
+
+    # Seperate by ;
+    IFS=';'; fields=($line); unset IFS;
+    uri="${fields[7]}:${fields[8]}"
+
+    if [[ " ${device_uris[*]} " =~ [[:space:]]${uri}[[:space:]] ]]; then
+        continue
+    fi
+
+    device_uris+=($uri)
+    found_device=1
+done
+
+echo -en "${INPUT}Select the device to connect to [0, 1, 2, ...]: $NC"
+read device
+
+uri=${device_uris[$device]}
+
+echo $uri
