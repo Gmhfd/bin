@@ -32,7 +32,7 @@ prompt_to_contine () {
 # Sets the time_difference variable
 time_scince_last_run
 
-if (( time_difference <  1767402000)); then # 5 days in seconds
+if (( time_difference <  432000)); then # 5 days in seconds
     prompt_to_contine
 fi
 
