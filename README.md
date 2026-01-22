@@ -13,7 +13,7 @@ just `chmod +x` the files and run them, make sure to read dependecies and and th
 
 ## Dependecies
 - EVERYTHING
-	+ [bash](https://archlinux.org/packages/core/x86_64/bash/) as the interpreter
+	+ [bash](https://archlinux.org/packages/core/x86_64/bash/) as the interpreter (pulled by [base](https://archlinux.org/packages/core/any/base/) so you should have this already)
 
 - update
 	+ [yay](https://github.com/Jguer/yay) as the AUR helper
@@ -40,6 +40,10 @@ just `chmod +x` the files and run them, make sure to read dependecies and and th
 	+ [android-tools](https://archlinux.org/packages/extra/x86_64/android-tools/)
 	+ [scrcpy](https://archlinux.org/packages/extra/x86_64/scrcpy/)
 	+ [avahi](https://archlinux.org/packages/extra/x86_64/avahi/) for MDNS device discovery (optional, no check tho)
+	
+- connect-adb
+	+ [android-tools](https://archlinux.org/packages/extra/x86_64/android-tools/) for adb
+	+ [avahi](https://archlinux.org/packages/extra/x86_64/avahi/) for MDNS device discovery
 
 ## Credits
 - Bruno Bronosky for the [argument parsing snippet](https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash)
