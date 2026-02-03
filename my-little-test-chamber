@@ -2,50 +2,13 @@
 
 # Just a file where i try out random stuff
 
-## COLORS
-NC='\033[0m' # No Color
-ERROR='\033[0;31m[ERROR]'
-WARNING='\033[0;33m[WARNING]'
-INFO='\033[2;37m[INFO]'
-INPUT='\033[1;34m'
+trap "stop" EXIT
 
-device_uris=()
-device_names=()
-i=0
-found_device=0
-echo -e "${NC}These devices were found:"
-for line in $(avahi-browse --terminate --resolve --parsable --no-db-lookup _adb-tls-connect._tcp); do
-    # Device name is on the next line so we extract it here
-    if (( found_device > 0 )); then
-        # Remove Suffix '"'
-        name="${line%\"}"
-        # Remove prefix '"name='
-        name="${name#\"name=}"
-        device_names+=($name)
-        found_device=0
-        echo "$i: $name"
-        (( i++ ))
-    fi
+stop() {
+    echo "Stopping"
+    exit 0 # Will this loop? --> No, it didn't :)
+}
 
-    if [[ $line != =* ]]; then
-        continue
-    fi
-
-    # Seperate by ;
-    IFS=';'; fields=($line); unset IFS;
-    uri="${fields[7]}:${fields[8]}"
-
-    if [[ " ${device_uris[*]} " =~ [[:space:]]${uri}[[:space:]] ]]; then
-        continue
-    fi
-
-    device_uris+=($uri)
-    found_device=1
-done
-
-echo -en "${INPUT}Select the device to connect to [0, 1, 2, ...]: $NC"
-read device
-
-uri=${device_uris[$device]}
-
-echo $uri
+echo "Endo of PRogram"
+exit 0
+echo "Something else"

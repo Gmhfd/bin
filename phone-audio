@@ -10,18 +10,16 @@ NC='\033[0m' # No Color
 ERROR='\033[0;31m[ERROR]'
 WARNING='\033[0;33m[WARNING]'
 INFO='\033[2;37m[INFO]'
+ADB='\033[2;37m[ADB]'
 INPUT='\033[1;34m'
 
 ## FUNCTIONS
-stream_audio() {
-    scrcpy --require-audio --no-video --no-window --no-control $args
-}
 
 connect_new() {
-    echo -en "${NC}1: Find device via MDNS \n2: Connect directly via IP \n3: It's already connected \n${INPUT}Choose an option: $NC"
+    echo -en "${NC}1: Find device via MDNS \n2: Connect directly via IP \n3: It's already connected \n${INPUT}Choose an option [1]: $NC"
     read answer
     case $answer in
-        1)
+        1|"")
             connect_mdns
         ;;
         2)
@@ -30,7 +28,7 @@ connect_new() {
         3)
             if (( $(all_connected) > 0 )); then
                 echo -e "$INFO New devices detected..."
-                main
+                start
                 return
             fi
             echo -e "$WARNING Unable to find any connected devices. Run 'adb devices' to check yourself"
@@ -80,19 +78,21 @@ connect_mdns() {
         found_device=1
     done
 
-    echo -en "${INPUT}Select the device to connect to [0, 1, 2, ...]: $NC"
+    echo -en "${INPUT}Select the device to connect to [0]: $NC"
     read device
 
     local uri=${device_uris[$device]}
-    echo -e "$INFO Attempting to connect to $uri"
+    local device_name=${device_names[$device]}
+    echo -e "$INFO Attempting to connect to $device_name ($uri)"
     local adb_result=$(adb connect $uri)
-    echo -e "$INFO $adb_result"
+    echo -e "$ADB $adb_result"
 
     # Note: adb exits with 0 even if the connection fails,
     # so I'm checking its output
     if [[ $adb_result =~ connected ]]; then
-        echo -e "$INFO Successfully conected to $uri"
+        echo -e "$INFO Successfully conected to $device_name ($uri)"
         args="--serial=$uri"
+        connected_device="$uri"
         return
     fi
     echo -e "$ERROR Failed to connect to $uri"
@@ -105,7 +105,7 @@ connect_ip() {
     read uri
     if [[ $answer =~ $IPADRESS_PORT_REGEX ]]; then
         adb_result="$(adb connect $uri)"
-        echo -e "$INFO $adb_result"
+        echo -e "$ADB $adb_result"
         if [[ $adb_result =~ connected ]]; then
             echo -e "$INFO Successfully connected to $uri"
         else
@@ -114,6 +114,7 @@ connect_ip() {
             return
         fi
         args="--serial=$uri"
+        connected_device="$uri"
     else
         echo -e "$ERROR Invalid IP-Adress and/or Port"
         connect_new
@@ -188,7 +189,7 @@ choose_device() {
     args="--serial=${adb_devices[$device]}"
 }
 
-main() {
+start() {
     if (( $(all_connected) > 1 )); then
         echo -e "$INFO Multiple devices found..."
         choose_device
@@ -204,9 +205,66 @@ main() {
     fi
 }
 
-main
+stop() {
+    echo -e "$INFO Stopping scrcpy"
+    kill -2 $(jobs -p) # SIGINT to stop scrcpy gracefully
+    echo -e "$NC $connected_device"
+    if [[ -n $connected_device ]]; then
+        local adb_result="$(adb disconnect $connected_device)"
+        echo -e "$ADB $adb_result"
+        if [[ "$adb_result" == "disconnected $connected_device" ]]; then
+            echo -e "$INFO Disconnected from $connected_device"
+        else
+            echo -e "$ERROR Failed to disconnect from $connected_device"
+        fi
+    else
+        echo -e "$INFO Device was already connected, not disconnecting"
+    fi
+    echo -e "$NC"
+    kill -9 $(jobs -p) > /dev/null 2>&1 # If its still running we wont be nice anymore
+    exit 0
+}
+
+stop_sigint() {
+    echo -e "$INFO SIGINT recieved, shutting down"
+    exit 0 # Trap will clean up
+}
+
+trap "stop" EXIT
+
+start
+
+trap "stop_sigint" SIGINT # After selecting device, before scrcpy
 
 #Reset color before running scrcpy
 echo -en "$NC"
 
-stream_audio
+scrcpy --require-audio --no-video --no-window --no-control $args > /dev/null & # Keep stderr
+
+while true; do
+read -s -n 1 command
+case "$command" in
+    r)
+        echo -e "$INFO Restarting scrcpy"
+        kill -2 $(jobs -p) # SIGINT to stop scrcpy gracefully
+        sleep 1s
+        kill -9 $(jobs -p) > /dev/null 2>&1 # If its still running we wont be nice anymore
+        #Reset color before running scrcpy
+        echo -en "$NC"
+        scrcpy --require-audio --no-video --no-window --no-control $args > /dev/null & # Keep stderr
+        ;;
+    q)
+        echo -e "$INFO Quitting program"
+        exit 0 # Trap will clean up
+        ;;
+    d)
+        echo -e "$NC $(jobs -p)"
+        ;;
+    h|*)
+        echo \
+"h: show help
+r: restart scrcpy
+q: quit program"
+        ;;
+esac
+done
