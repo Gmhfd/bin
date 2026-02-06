@@ -41,6 +41,12 @@ just `chmod +x` the files and run them, make sure to read dependecies and and th
 	+ [scrcpy](https://archlinux.org/packages/extra/x86_64/scrcpy/)
 	+ [avahi](https://archlinux.org/packages/extra/x86_64/avahi/) for MDNS device discovery (optional, no check tho)
 	
+- phone-camera
+	+  [scrcpy](https://archlinux.org/packages/extra/x86_64/scrcpy/) to stream the camera
+	+  [sudo](https://archlinux.org/packages/core/x86_64/sudo/) for privilege escalation
+	+  [v4l2loopback-dkms](https://archlinux.org/packages/extra/any/v4l2loopback-dkms/) the loopback device
+	+  [v4l2loopback-utils](https://archlinux.org/packages/extra/any/v4l2loopback-utils/) to control the loopback device
+	
 - connect-adb
 	+ [android-tools](https://archlinux.org/packages/extra/x86_64/android-tools/) for adb
 	+ [avahi](https://archlinux.org/packages/extra/x86_64/avahi/) for MDNS device discovery

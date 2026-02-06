@@ -1,0 +1,34 @@
+#!/bin/bash
+
+if [[ -n $1 ]]; then
+echo "USAGE: phone-camera
+DESCRIPTION: This utility allows you to use your phone as a webcam.
+    This works by creating a v4l2 loopback device and then streaming your devices camera to it using scrcpy over adb
+OPTIONS: There are no options, to change a setting edit the script"
+fi
+
+# i ain't making another connection script, just do it yourself
+
+if [[ -x $(command -v v4l2loopback-ctl) ]]; then
+echo "v4l2loopback-ctl not found, install it with 'sudo pacman -Syu v4l2loopback-utils'"
+exit 1;
+fi
+
+v4l2_device="$(sudo v4l2loopback-ctl add -n 'Phone Camera')"
+
+echo "
+ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+ ┃                                                   This Script doesn't handle device connections, you have to do it yourself here                                                   	┃
+ ┃ If the video stream is currently active it won't be automatically removed when you quit the program, you can use 'sudo v4l2loopback-ctl delete $v4l2_device' to remove it manually 	┃
+ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+"
+
+# Trap for cleanup
+trap "sudo v4l2loopback-ctl delete $v4l2_device" EXIT
+
+scrcpy --no-playback --no-window \
+--video-source="camera" \
+--camera-facing="back" \
+--v4l2-sink="$v4l2_device" \
+--camera-size=2560x1440 # this limits the resulution, because it crashes for me otherwise,
+# to find your max resulution run scrcpy --list-camera-sizes and try a higher value from the list for the first back facing camera (most likely camera-id=0)
