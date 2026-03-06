@@ -207,7 +207,7 @@ start() {
 
 stop() {
     echo -e "$INFO Stopping scrcpy"
-    kill -2 $(jobs -p) # SIGINT to stop scrcpy gracefully
+    kill -2 $(jobs -p) > /dev/null 2>&1 # SIGINT to stop scrcpy gracefully
     echo -e "$NC $connected_device"
     if [[ -n $connected_device ]]; then
         local adb_result="$(adb disconnect $connected_device)"
