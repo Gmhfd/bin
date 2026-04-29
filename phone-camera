@@ -16,14 +16,14 @@ fi
 
 cleanup() {
     sudo v4l2loopback-ctl delete "$v4l2_device" > /dev/null 2>&1
-    if (( $? != 0 )); then; echo "Failed to remove V4L2-Device. Use 'sudo v4l2loopback-ctl delete $v4l2_device' to remove it manually"
+    if (( $? != 0 )); then echo "Failed to remove V4L2-Device. Use 'sudo v4l2loopback-ctl delete $v4l2_device' to remove it manually"; fi
     sudo modprobe -r v4l2loopback > /dev/null 2>&1
-    if (( $? != 0 )); then; echo "Failed to unload 'v4l2loopback'. Use 'sudo modprobe -r v4l2loopback' to unload it manually"
+    if (( $? != 0 )); then echo "Failed to unload 'v4l2loopback'. Use 'sudo modprobe -r v4l2loopback' to unload it manually"; fi
 
 }
 
 # Load kernel module
-sudo modprobe v4l2loopback
+sudo modprobe v4l2loopback devices=0
 
 v4l2_device="$(sudo v4l2loopback-ctl add -n 'Phone Camera')"
 
