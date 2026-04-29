@@ -19,6 +19,7 @@ find_mdns() {
     device_names=()
     local i=0
     local found_device=0
+    sudo systemctl start avahi-daemon
     for line in $(avahi-browse --terminate --resolve --parsable --no-db-lookup _adb-tls-connect._tcp); do
         # Device name is on the next line so we extract it here
         if (( found_device > 0 )); then
