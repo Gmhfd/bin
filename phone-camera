@@ -9,12 +9,26 @@ fi
 
 # i ain't making another connection script, just do it yourself
 
-if [[ -x $(command -v v4l2loopback-ctl) ]]; then
+if [[ ! -e $(command -v v4l2loopback-ctl) ]]; then
 echo "v4l2loopback-ctl not found, install it with 'sudo pacman -Syu v4l2loopback-utils'"
 exit 1;
 fi
 
+cleanup() {
+    sudo v4l2loopback-ctl delete "$v4l2_device" > /dev/null 2>&1
+    if (( $? != 0 )); then; echo "Failed to remove V4L2-Device. Use 'sudo v4l2loopback-ctl delete $v4l2_device' to remove it manually"
+    sudo modprobe -r v4l2loopback > /dev/null 2>&1
+    if (( $? != 0 )); then; echo "Failed to unload 'v4l2loopback'. Use 'sudo modprobe -r v4l2loopback' to unload it manually"
+
+}
+
+# Load kernel module
+sudo modprobe v4l2loopback
+
 v4l2_device="$(sudo v4l2loopback-ctl add -n 'Phone Camera')"
+
+# Trap for cleanup
+trap "cleanup" EXIT
 
 echo "
  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -22,9 +36,6 @@ echo "
  ┃ If the video stream is currently active it won't be automatically removed when you quit the program, you can use 'sudo v4l2loopback-ctl delete $v4l2_device' to remove it manually 	┃
  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 "
-
-# Trap for cleanup
-trap "sudo v4l2loopback-ctl delete $v4l2_device" EXIT
 
 scrcpy --no-playback --no-window \
 --video-source="camera" \
