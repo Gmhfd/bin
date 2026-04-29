@@ -15,6 +15,16 @@ INPUT='\033[1;34m'
 
 ## FUNCTIONS
 
+help() {
+echo \
+"Usage: update [OPTIONS]
+Simple utility to run a full system upgrade
+Options:
+	-h, --help ............... Show this help
+	    --mdns ............... Connect to first available mdns device"
+    exit 1
+}
+
 connect_new() {
     echo -en "${NC}1: Find device via MDNS \n2: Connect directly via IP \n3: It's already connected \n${INPUT}Choose an option [1]: $NC"
     read answer
@@ -48,6 +58,7 @@ connect_mdns() {
     local device_names=()
     local i=0
     local found_device=0
+    sudo systemctl start avahi-daemon
     echo -e "${NC}These devices were found:"
     for line in $(avahi-browse --terminate --resolve --parsable --no-db-lookup _adb-tls-connect._tcp); do
         # Device name is on the next line so we extract it here
@@ -79,8 +90,11 @@ connect_mdns() {
     done
 
     echo -en "${INPUT}Select the device to connect to [0]: $NC"
-    read device
-
+    if [[ -n $1 ]]; then
+        device=$1
+    else
+        read device
+    fi
     local uri=${device_uris[$device]}
     local device_name=${device_names[$device]}
     echo -e "$INFO Attempting to connect to $device_name ($uri)"
@@ -189,8 +203,39 @@ choose_device() {
     args="--serial=${adb_devices[$device]}"
 }
 
+parse_arguments() {
+    while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+        help
+        ;;
+
+        --mdns)
+        MDNS_FIRST=TRUE
+        shift # past argument
+        ;;
+
+        # --example)
+        # EXAMPLE="$2"
+        # shift # past argument
+        # shift # past value
+        # ;;
+
+        *)
+        help
+        ;;
+
+    esac
+    done
+
+    # set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters shoud there ever be any
+}
+
 start() {
-    if (( $(all_connected) > 1 )); then
+    if [[ $MDNS_FIRST == TRUE ]]; then
+        echo -e "$INFO Connecting to first MDNS device"
+        connect_mdns 0
+    elif (( $(all_connected) > 1 )); then
         echo -e "$INFO Multiple devices found..."
         choose_device
     elif (( $(usb_connected) == 1 )); then
@@ -207,7 +252,7 @@ start() {
 
 stop() {
     echo -e "$INFO Stopping scrcpy"
-    kill -2 $(jobs -p) > /dev/null 2>&1 # SIGINT to stop scrcpy gracefully
+    kill -QUIT $(jobs -p) > /dev/null 2>&1 # SIGINT to stop scrcpy gracefully
     echo -e "$NC $connected_device"
     if [[ -n $connected_device ]]; then
         local adb_result="$(adb disconnect $connected_device)"
@@ -229,6 +274,8 @@ stop_sigint() {
     echo -e "$INFO SIGINT recieved, shutting down"
     exit 0 # Trap will clean up
 }
+
+parse_arguments $@
 
 trap "stop" EXIT
 
