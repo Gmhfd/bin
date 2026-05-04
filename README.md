@@ -31,11 +31,6 @@ just `chmod +x` the files and run them, make sure to read dependecies and and th
 	+ [pacman](https://archlinux.org/packages/core/x86_64/pacman/) (pulled by [base](https://archlinux.org/packages/core/any/base/) so you should have this already)
 	+ [sudo](https://archlinux.org/packages/core/x86_64/sudo/)
 	
-- checkpartitionsalignment
-	+ lsblk from [util-linux](https://archlinux.org/packages/core/x86_64/util-linux/) (pulled by [base](https://archlinux.org/packages/core/any/base/) so you should have this already)
-	+ [parted](https://archlinux.org/packages/extra/x86_64/parted/)
-	+ [sudo](https://archlinux.org/packages/core/x86_64/sudo/)
-	
 - phone-audio
 	+ [android-tools](https://archlinux.org/packages/extra/x86_64/android-tools/)
 	+ [scrcpy](https://archlinux.org/packages/extra/x86_64/scrcpy/)
@@ -53,8 +48,10 @@ just `chmod +x` the files and run them, make sure to read dependecies and and th
 
 ## Credits
 - Bruno Bronosky for the [argument parsing snippet](https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash)
-- crysman for the entire [checkpartitionsalignment script](https://github.com/crysman/check-partitions-alignment) (its just straight copied from there)
 - gnumoksha for the [mdns device discovery snippet](https://gist.github.com/gnumoksha/f9a5b2e01b1e74ffa2a055b6e18f7c58)
 
 ## Contributing
 If you want to contribute to this collection for whatever reason just open a PR and I will look at it sooner or later
+
+## Additional Utilities
+- [checkpartitionsalignment](https://github.com/crysman/check-partitions-alignment) is a usefull script to check, wether or not your partitions are properly aligned (Dependencies: [util-linux](https://archlinux.org/packages/core/x86_64/util-linux/), [parted](https://archlinux.org/packages/extra/x86_64/parted/), [sudo](https://archlinux.org/packages/core/x86_64/sudo/))
