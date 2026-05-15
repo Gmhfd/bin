@@ -17,8 +17,8 @@ INPUT='\033[1;34m'
 
 help() {
 echo \
-"Usage: update [OPTIONS]
-Simple utility to run a full system upgrade
+"Usage: phone-audio [OPTIONS]
+Listen to your phone from your PC via adb
 Options:
 	-h, --help ............... Show this help
 	    --mdns ............... Connect to first available mdns device"

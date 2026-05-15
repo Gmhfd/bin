@@ -1,0 +1,33 @@
+#!/usr/bin/bash
+
+if [[ -z $1 ]] || [[ -n $2 ]]; then
+echo \
+"Usage: kio-mount [URL]
+Mount the KIO_URL for access from kio unaware software"
+    exit 1
+fi
+
+# KIO-FUSE needs to be running
+systemctl --user start kio-fuse
+
+response="$(dbus-send --session --print-reply=literal \
+    --type=method_call \
+    --dest=org.kde.KIOFuse \
+            /org/kde/KIOFuse \
+            org.kde.KIOFuse.VFS.mountUrl string:"$1")"
+
+
+if ! [[ "$response" =~ [[:space:]]{3}$XDG_RUNTIME_DIR/kio-fuse-.+/.+$ ]]; then
+    echo "An error occured, see above"
+    echo "$response"
+    exit 2
+fi
+
+mount_point="${response#"${response%%[![:space:]]*}"}"
+
+echo "Mounted under: $mount_point"
+
+if command -v wl-copy &> /dev/null; then
+    wl-copy "$mount_point"
+    echo "Copied to clipboard"
+fi

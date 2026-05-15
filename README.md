@@ -45,6 +45,14 @@ just `chmod +x` the files and run them, make sure to read dependecies and and th
 - connect-adb
 	+ [android-tools](https://archlinux.org/packages/extra/x86_64/android-tools/) for adb
 	+ [avahi](https://archlinux.org/packages/extra/x86_64/avahi/) for MDNS device discovery
+	
+- kio-mount
+	+ [kio-fuse](https://archlinux.org/packages/extra/x86_64/kio-fuse/) for KIO FUSE filesystem
+	+ [dbus](https://archlinux.org/packages/core/x86_64/dbus/) to control kio-fuse
+	+ [wl-clipboard](https://archlinux.org/packages/extra/x86_64/wl-clipboard/) clipboard support on wayland (optional)
+	
+- kio-umount
+	+ [fuse3](https://archlinux.org/packages/extra/x86_64/fuse3/) to unmount FUSE filesystem
 
 ## Credits
 - Bruno Bronosky for the [argument parsing snippet](https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash)

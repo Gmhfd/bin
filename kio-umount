@@ -1,0 +1,56 @@
+#!/usr/bin/bash
+
+help() {
+echo \
+"Usage: kio-unmount [-s]
+Unmount currently mounted kio-fuse filesystems and (optionally) stop kio-fuseOptions:
+	-h, --help .................... Show this help
+	-s, --stop, --stop-kio-fuse ... Stop KIO Fuse service
+	-n, --noconfirm ............... Don't ask for confirmation, just do"
+    exit 1
+}
+
+parse_arguments() {
+    while [[ $# -gt 0 ]]; do
+    case $1 in
+        -s|--stop|--stop-kio-fuse)
+        STOP_KIO_FUSE=TRUE
+        shift # past argument
+        ;;
+
+        -n|--noconfirm)
+        NOCONFIRM=TRUE
+        shift # past argument
+        ;;
+
+        *)
+        help
+        ;;
+
+    esac
+    done
+}
+
+stop_kio_fuse_service() {
+if  [[ $STOP_KIO_FUSE == TRUE ]]; then
+    systemctl --user stop kio-fuse
+    echo "Stopped kio-fuse"
+fi
+}
+
+kio_dir=$(grep kio-fuse /etc/mtab)
+kio_dir=${kio_dir[1]}
+
+if [[ -z "$kio_dir" ]]; then
+    echo "No KIO filesystem mounted currently"
+    stop_kio_fuse_service
+    exit 2
+fi
+
+if [[ $NOCONFIRM != TRUE ]]; then
+    read -p "This will unmount all folders mounted currently via KIO! (Confirm by pressing ENTER) "
+fi
+
+fusermount3 -u "$kio_dir"
+
+stop_kio_fuse_service
