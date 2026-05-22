@@ -9,5 +9,10 @@ fi
 # Make sure Avahi is running (Socket activation should take care of this but it failed on me before)
 sudo systemctl start avahi-daemon.service
 
+# get UID and GID
+uid="$(id --user)"
+gid="$(id --group)"
+
 # Mount NAS
-sudo mount --mkdir -t cifs //nas.local/home /home/Gmhfd/NAS -o credentials=/etc/samba/credentials/sg@NAS,iocharset=utf8,uid=1000,gid=1000,vers=2.0,nodev,nosuid,noexec
+sudo mount --mkdir -t cifs //nas.local/home /home/Gmhfd/NAS -o credentials=/etc/samba/credentials/sg@NAS,iocharset=utf8,uid=$uid,gid=$gid,vers=2.0,nodev,nosuid,noexec
+
