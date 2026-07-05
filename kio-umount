@@ -42,7 +42,7 @@ kio_dir=$(grep kio-fuse /etc/mtab)
 kio_dir=${kio_dir[1]}
 
 if [[ -z "$kio_dir" ]]; then
-    echo "No KIO filesystem mounted currently"
+    echo "No KIO filesystem currently mounted"
     stop_kio_fuse_service
     exit 2
 fi
@@ -54,3 +54,4 @@ fi
 fusermount3 -u "$kio_dir"
 
 stop_kio_fuse_service
+
